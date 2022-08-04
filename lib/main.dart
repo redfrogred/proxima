@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -12,8 +11,7 @@ void main() {
       bodyText1: TextStyle(),
       bodyText2: TextStyle(),
     ).apply(
-      bodyColor: Color(0xFF000000), 
-      // displayColor: Colors.blue, 
+      bodyColor: const Color(0xFF000000), 
     ),
   ),    
   initialRoute: 'FirstRoute',
@@ -85,13 +83,13 @@ class _FirstRouteState extends State<FirstRoute> {
             ]          
           ),
         ),
-        backgroundColor: Color(0xFFcccccc),
+        backgroundColor: const Color(0xFFcccccc),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(width: 300,child: Text('FirstRoute()\nis a Stateful Widget')),
-              Container(
+              const SizedBox(width: 300,child: const Text('FirstRoute()\nis a Stateful Widget')),
+              SizedBox(
                 width: 300,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -111,10 +109,10 @@ class _FirstRouteState extends State<FirstRoute> {
                   ),
                 ),
               ),
-              Container(
+              const SizedBox(
                 width: 300,
                 child: Text('\nEnter some text and navigate away.\n')),
-              Container(
+              const SizedBox(
                 width: 300,
                 child: Text('View the console to see the\ndebug messages...')),
             ],
