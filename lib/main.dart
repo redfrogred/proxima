@@ -1,118 +1,126 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
-
+// from:
+// https://github.com/flutter/samples/blob/main/provider_counter/pubspec.yaml
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:proxima/widgets/Main_table_of_contents.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: 'Flutter Demo',
-      theme: ThemeData(
-    textTheme: const TextTheme(
-      bodyText1: TextStyle(),
-      bodyText2: TextStyle(),
-    ).apply(
-      bodyColor: Color(0xFFeeeeee), 
-      // displayColor: Colors.blue, 
+  runApp(
+    // Provide the model to all widgets within the app. We're using
+    // ChangeNotifierProvider because that's a simple way to rebuild
+    // widgets when a model changes. We could also just use
+    // Provider, but then we would have to listen to Counter ourselves.
+    //
+    // Read Provider's docs to learn about all the available providers.
+    ChangeNotifierProvider(
+      // Initialize the model in the builder. That way, Provider
+      // can own Counter's lifecycle, making sure to call `dispose`
+      // when not needed anymore.
+      create: (context) => Counter(),
+      child: MyApp(),
     ),
-  ),    
-    home: FirstRoute(),
-  ));
+  );
 }
 
-class FirstRoute extends StatefulWidget {
-  const FirstRoute();
+/// Simplest possible model, with just one field.
+///
+/// [ChangeNotifier] is a class in `flutter:foundation`. [Counter] does
+/// _not_ depend on Provider.
+class Counter with ChangeNotifier {
+  int value = 0;
 
-  @override
-  State<FirstRoute> createState() => _FirstRouteState();
+  void increment() {
+    value += 1;
+    notifyListeners();
+  }
+
+  void reset() {
+    value = -1;
+    notifyListeners();
+  }
+
 }
 
-class _FirstRouteState extends State<FirstRoute> {
-
-  @override
-  void initState() {
-    super.initState();
-    print ( 'FirstRoute initState()...');
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+class MyApp extends StatelessWidget {
+  MyApp();
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-         
-       extendBodyBehindAppBar: true, 
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(64.0),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            actions: [
-              // action button
-              IconButton(
-                icon: const Icon( Icons.arrow_circle_right_outlined, size:32 ),
-                  onPressed: () { 
-                  // Navigator.push( context, MaterialPageRoute(builder: (context) => const SecondRoute()));
-                   Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeft,
-                      child: SecondRoute(),
-                    ),
-                  );
-                },              
-              ),  
-            ]          
-          ),
-        ),
-        backgroundColor: Color(0xFF000000),
-        body: Stack(
-          children: [
-            Main_table_of_contents(),
-          ],
-        ),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      home: MyHomePage(),
     );
   }
 }
 
-class SecondRoute extends StatelessWidget {
-  const SecondRoute({ Key? key }) : super(key: key);
+class MyHomePage extends StatelessWidget {
+  MyHomePage();
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-       extendBodyBehindAppBar: true, 
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(64.0),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            actions: [
-              // action button
-              IconButton(
-                icon: const Icon( Icons.arrow_circle_left_outlined, size:32, color: Colors.black ),
-                  onPressed: () { 
-                  Navigator.pop(context);
-                },              
-              ),  
-            ]          
+
+    var counter = context.read<Counter>();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Counter using Provider'),
+      ),
+      body: Stack (
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Button pushed this many times:'),
+                // Consumer looks for an ancestor Provider widget
+                // and retrieves its model (Counter, in this case).
+                // Then it uses that model to build widgets, and will trigger
+                // rebuilds if the model is updated.
+                Consumer<Counter>(
+                  builder: (context, counter, child) => Text(
+                    '${counter.value}',
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        backgroundColor: Color(0xFFeeeeee),
-        body: Stack(
-          children: [
-            const Center(child: Text('SecondRoute', style: TextStyle( color: Colors.black ))),
-          ],
-        ),
+          Positioned(
+            left: 0,
+            bottom: 0,
+            child: TextButton(
+              child: Text('Reset'),
+              onPressed: () {
+                counter.reset();
+              },
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // You can access your providers anywhere you have access
+          // to the context. One way is to use Provider.of<Counter>(context).
+          //
+          // The provider package also defines extension methods on context
+          // itself. You can call context.watch<Counter>() in a build method
+          // of any widget to access the current state of Counter, and to ask
+          // Flutter to rebuild your widget anytime Counter changes.
+          //
+          // You can't use context.watch() outside build methods, because that
+          // often leads to subtle bugs. Instead, you should use
+          // context.read<Counter>(), which gets the current state
+          // but doesn't ask Flutter for future rebuilds.
+          //
+          // Since we're in a callback that will be called whenever the user
+          // taps the FloatingActionButton, we are not in the build method here.
+          // We should use context.read().
+          counter.increment();
+        },
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
       ),
     );
   }
