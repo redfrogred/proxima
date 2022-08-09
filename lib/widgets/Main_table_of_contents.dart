@@ -79,8 +79,8 @@ class Main_table_of_contents extends StatelessWidget {
                   TableRow( 
                     decoration: _stripe,  // zebra stripe this row!                    
                     children: [  
-                      _td('name'),  
-                      _td('description here...'),  
+                      _td('provider'),  
+                      _td('thr counter app but using Provider (with Consumer!)'),  
                     ]
                   ),  
                 ],  
