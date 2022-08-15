@@ -60,7 +60,7 @@ class Main_table_of_contents extends StatelessWidget {
                   TableRow( 
                     children: [  
                       _td('branch',20),  
-                      _td('decription',20),   
+                      _td('description',20),   
                     ]
                   ),  
                   TableRow( 
@@ -80,9 +80,15 @@ class Main_table_of_contents extends StatelessWidget {
                     decoration: _stripe,  // zebra stripe this row!                    
                     children: [  
                       _td('provider'),  
-                      _td('thr counter app but using Provider (with Consumer!)'),  
+                      _td('the counter app but using Provider (with Consumer!)'),  
                     ]
                   ),  
+                  TableRow(                
+                    children: [  
+                      _td('fetch'),  
+                      _td('a very simple JSON fetch (without any complicated conversion...)'),  
+                    ]
+                  ),                    
                 ],  
               ),
             ),
@@ -92,7 +98,7 @@ class Main_table_of_contents extends StatelessWidget {
             // legend
             const Padding(
               padding: EdgeInsets.all(25.0),
-              child: Text('Above are some Git branch names that are for various code samples.  You can see them in action by using:\ngit checkout -b <<branch_name>>'),
+              child: Text('Use Git branch names to see working examples...'),
             ),
 
           ],
