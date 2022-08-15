@@ -1,117 +1,87 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
+import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:proxima/widgets/Main_table_of_contents.dart';
+import 'package:http/http.dart' as http;
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: 'Flutter Demo',
-      theme: ThemeData(
-    textTheme: const TextTheme(
-      bodyText1: TextStyle(),
-      bodyText2: TextStyle(),
-    ).apply(
-      bodyColor: Color(0xFFeeeeee), 
-      // displayColor: Colors.blue, 
-    ),
-  ),    
-    home: FirstRoute(),
-  ));
+Future<Album> fetchAlbum() async {
+  final response = await http
+      .get(Uri.parse('https://mattgarvin.com/api/test/2'));
+      //.get(Uri.parse('https://mattgarvin.com/api/test/1/album.json'));
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    return Album.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load album');
+  }
 }
 
-class FirstRoute extends StatefulWidget {
-  const FirstRoute();
+class Album {
+  final int userId;
+  final int id;
+  final String title;
 
-  @override
-  State<FirstRoute> createState() => _FirstRouteState();
-}
+  const Album({
+    required this.userId,
+    required this.id,
+    required this.title,
+  });
 
-class _FirstRouteState extends State<FirstRoute> {
-
-  @override
-  void initState() {
-    super.initState();
-    print ( 'FirstRoute initState()...');
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-         
-       extendBodyBehindAppBar: true, 
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(64.0),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            actions: [
-              // action button
-              IconButton(
-                icon: const Icon( Icons.arrow_circle_right_outlined, size:32 ),
-                  onPressed: () { 
-                  // Navigator.push( context, MaterialPageRoute(builder: (context) => const SecondRoute()));
-                   Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeft,
-                      child: SecondRoute(),
-                    ),
-                  );
-                },              
-              ),  
-            ]          
-          ),
-        ),
-        backgroundColor: Color(0xFF000000),
-        body: Stack(
-          children: [
-            Main_table_of_contents(),
-          ],
-        ),
-      ),
+  factory Album.fromJson(Map<String, dynamic> json) {
+    return Album(
+      userId: json['userId'],
+      id: json['id'],
+      title: json['title'],
     );
   }
 }
 
-class SecondRoute extends StatelessWidget {
-  const SecondRoute({ Key? key }) : super(key: key);
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Future<Album> futureAlbum;
+
+  @override
+  void initState() {
+    super.initState();
+    futureAlbum = fetchAlbum();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-       extendBodyBehindAppBar: true, 
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(64.0),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            actions: [
-              // action button
-              IconButton(
-                icon: const Icon( Icons.arrow_circle_left_outlined, size:32, color: Colors.black ),
-                  onPressed: () { 
-                  Navigator.pop(context);
-                },              
-              ),  
-            ]          
-          ),
+    return MaterialApp(
+      title: 'Fetch Data Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Fetch Data Example'),
         ),
-        backgroundColor: Color(0xFFeeeeee),
-        body: Stack(
-          children: [
-            const Center(child: Text('SecondRoute', style: TextStyle( color: Colors.black ))),
-          ],
+        body: Center(
+          child: FutureBuilder<Album>(
+            future: futureAlbum,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text('title: "${snapshot.data!.title}"');
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              }
+
+              // By default, show a loading spinner.
+              return const CircularProgressIndicator();
+            },
+          ),
         ),
       ),
     );
