@@ -1,119 +1,47 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:proxima/widgets/Main_table_of_contents.dart';
+void main() async {
 
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: 'Flutter Demo',
-      theme: ThemeData(
-    textTheme: const TextTheme(
-      bodyText1: TextStyle(),
-      bodyText2: TextStyle(),
-    ).apply(
-      bodyColor: Color(0xFFeeeeee), 
-      // displayColor: Colors.blue, 
-    ),
-  ),    
-    home: FirstRoute(),
-  ));
+  // see:
+  // https://javiercbk.github.io/json_to_dart/
+  // and
+  // https://www.youtube.com/watch?v=FH4ckL37LHw
+  // and set a timeout here
+  // https://stackoverflow.com/questions/66423978/how-can-i-get-time-of-async-function-execution
+
+  String url = 'https://mattgarvin.com/api/pp1/user/4/';
+  final response = await http.get(Uri.parse(url));
+
+  User user = User.fromJson(jsonDecode(response.body));
+
+  print(user.usrFirstName);
 }
 
-class FirstRoute extends StatefulWidget {
-  const FirstRoute();
+class User {
+  int? errId;
+  String? errCode;
+  int? usrId;
+  String? usrKey;
+  String? usrFirstName;
 
-  @override
-  State<FirstRoute> createState() => _FirstRouteState();
-}
+  User({this.errId, this.errCode, this.usrId, this.usrKey, this.usrFirstName});
 
-class _FirstRouteState extends State<FirstRoute> {
-
-  @override
-  void initState() {
-    super.initState();
-    print ( 'FirstRoute initState()...');
+  User.fromJson(Map<String, dynamic> json) {
+    errId = json['errId'];
+    errCode = json['errCode'];
+    usrId = json['usrId'];
+    usrKey = json['usrKey'];
+    usrFirstName = json['usrFirstName'];
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-         
-       extendBodyBehindAppBar: true, 
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(64.0),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            actions: [
-              // action button
-              IconButton(
-                icon: const Icon( Icons.arrow_circle_right_outlined, size:32 ),
-                  onPressed: () { 
-                  // Navigator.push( context, MaterialPageRoute(builder: (context) => const SecondRoute()));
-                   Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeft,
-                      child: SecondRoute(),
-                    ),
-                  );
-                },              
-              ),  
-            ]          
-          ),
-        ),
-        backgroundColor: Color(0xFF000000),
-        body: Stack(
-          children: [
-            Main_table_of_contents(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SecondRoute extends StatelessWidget {
-  const SecondRoute({ Key? key }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-       extendBodyBehindAppBar: true, 
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(64.0),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            actions: [
-              // action button
-              IconButton(
-                icon: const Icon( Icons.arrow_circle_left_outlined, size:32, color: Colors.black ),
-                  onPressed: () { 
-                  Navigator.pop(context);
-                },              
-              ),  
-            ]          
-          ),
-        ),
-        backgroundColor: Color(0xFFeeeeee),
-        body: Stack(
-          children: [
-            const Center(child: Text('SecondRoute', style: TextStyle( color: Colors.black ))),
-          ],
-        ),
-      ),
-    );
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['errId'] = this.errId;
+    data['errCode'] = this.errCode;
+    data['usrId'] = this.usrId;
+    data['usrKey'] = this.usrKey;
+    data['usrFirstName'] = this.usrFirstName;
+    return data;
   }
 }
