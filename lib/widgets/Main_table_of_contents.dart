@@ -33,13 +33,13 @@ class Main_table_of_contents extends StatelessWidget {
             // route
             const Padding(
               padding: EdgeInsets.all(25.0),
-              child: Text('( FirstRoute )'),
+              child: Text('~ Page 1 of 2 ~'),
             ),
 
             // title
             const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text('Table of Contents', style: TextStyle( fontSize: 28,)),
+              padding: EdgeInsets.fromLTRB(0,0,0,10),
+              child: Text('Table of Contents', style: TextStyle( fontSize: 22,)),
             ),
 
             // see:
@@ -88,7 +88,14 @@ class Main_table_of_contents extends StatelessWidget {
                       _td('fetch'),  
                       _td('a very simple JSON fetch (without any complicated conversion...)'),  
                     ]
-                  ),                    
+                  ),    
+                  TableRow( 
+                    decoration: _stripe,  // zebra stripe this row!                    
+                    children: [  
+                      _td('fetchUser'),  
+                      _td('another simple JSON fetch'),  
+                    ]
+                  ),                                  
                 ],  
               ),
             ),
