@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:proxima/widgets/Main_table_of_contents.dart';
+import 'package:proxima/widgets/Page2_table_of_contents.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -99,7 +100,7 @@ class SecondRoute extends StatelessWidget {
             actions: [
               // action button
               IconButton(
-                icon: const Icon( Icons.arrow_circle_left_outlined, size:32, color: Colors.black ),
+                icon: const Icon( Icons.arrow_circle_left_outlined, size:32, color: Colors.white ),
                   onPressed: () { 
                   Navigator.pop(context);
                 },              
@@ -107,10 +108,10 @@ class SecondRoute extends StatelessWidget {
             ]          
           ),
         ),
-        backgroundColor: Color(0xFFeeeeee),
+        backgroundColor: Color(0xFF000000),
         body: Stack(
           children: [
-            const Center(child: Text('SecondRoute', style: TextStyle( color: Colors.black ))),
+            Page2_table_of_contents(),
           ],
         ),
       ),
