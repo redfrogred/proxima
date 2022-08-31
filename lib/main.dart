@@ -1,119 +1,54 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:proxima/widgets/Main_table_of_contents.dart';
-
 void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: 'Flutter Demo',
-      theme: ThemeData(
-    textTheme: const TextTheme(
-      bodyText1: TextStyle(),
-      bodyText2: TextStyle(),
-    ).apply(
-      bodyColor: Color(0xFFeeeeee), 
-      // displayColor: Colors.blue, 
-    ),
-  ),    
-    home: FirstRoute(),
-  ));
+  runApp(
+    MaterialApp(
+      home: MyApp(),
+    )
+  );
 }
 
-class FirstRoute extends StatefulWidget {
-  const FirstRoute();
-
+class MyApp extends StatefulWidget{
   @override
-  State<FirstRoute> createState() => _FirstRouteState();
+  _MyAppState createState() => _MyAppState();
 }
 
-class _FirstRouteState extends State<FirstRoute> {
-
-  @override
-  void initState() {
-    super.initState();
-    print ( 'FirstRoute initState()...');
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
+class _MyAppState extends State<MyApp> {
+  List<User> users = [
+     User(name: "Hari Prasad Chaudhary", address: "Kathmandu, Nepal"),
+     User(name:"David Mars", address: "Bangalore, India"),
+     User(name:"Aurn Thapa", address:"Canada"),
+     User(name: "John Bal", address:"United States of America"),
+     User(name: "Harry Balls", address:"Canada"),
+     User(name: "Bob Marley", address:"Jamaica"),
+     User(name: "Time Roth", address:"Wales"),
+  ];
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-         
-       extendBodyBehindAppBar: true, 
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(64.0),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            actions: [
-              // action button
-              IconButton(
-                icon: const Icon( Icons.arrow_circle_right_outlined, size:32 ),
-                  onPressed: () { 
-                  // Navigator.push( context, MaterialPageRoute(builder: (context) => const SecondRoute()));
-                   Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeft,
-                      child: SecondRoute(),
-                    ),
-                  );
-                },              
-              ),  
-            ]          
+    return Scaffold(
+          appBar: AppBar(
+              title:Text("Modal Array to List View"),
+              backgroundColor: Colors.redAccent,
           ),
-        ),
-        backgroundColor: Color(0xFF000000),
-        body: Stack(
-          children: [
-            Main_table_of_contents(),
-          ],
-        ),
-      ),
-    );
+          body: SingleChildScrollView(
+            child: Column(
+                  children: users.map((userone){
+                      return Container(
+                          child: ListTile(
+                              title: Text(userone.name),
+                              subtitle: Text("Address: " + userone.address),
+                          ),
+                          margin: EdgeInsets.all(5),
+                          padding: EdgeInsets.all(5),
+                          color: Colors.green[100],
+                      );
+                  }).toList(),
+            ),
+          )
+      );
   }
 }
 
-class SecondRoute extends StatelessWidget {
-  const SecondRoute({ Key? key }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-       extendBodyBehindAppBar: true, 
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(64.0),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            actions: [
-              // action button
-              IconButton(
-                icon: const Icon( Icons.arrow_circle_left_outlined, size:32, color: Colors.black ),
-                  onPressed: () { 
-                  Navigator.pop(context);
-                },              
-              ),  
-            ]          
-          ),
-        ),
-        backgroundColor: Color(0xFFeeeeee),
-        body: Stack(
-          children: [
-            const Center(child: Text('SecondRoute', style: TextStyle( color: Colors.black ))),
-          ],
-        ),
-      ),
-    );
-  }
+class User{
+   String name, address;
+   User({required this.name, required this.address});
 }
